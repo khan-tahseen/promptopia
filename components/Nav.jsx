@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 const Nav = () => {
   const isUserLogedIn = true; // Replace with actual check
   const [provider, setProvider] = useState(null);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
     const setProviders = async () => {
@@ -49,7 +50,6 @@ const Nav = () => {
                 width={40}
                 height={40}
                 className="rounded-full"
-                objectFit="cover"
               />
             </Link>
           </di>
@@ -66,6 +66,51 @@ const Nav = () => {
                   Sign In
                 </button>
               ))}
+          </>
+        )}
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="sm:hidden flex relative">
+        {isUserLogedIn ? (
+          <div>
+            <Image
+              src="assets/images/logo.svg"
+              alt="profile picture"
+              width={40}
+              height={40}
+              className="rounded-full"
+              onClick={() => setToggleDropdown((prew) => !prew)}
+            />
+
+            {toggleDropdown && (
+              <div className="dropdown">
+                <Link
+                  href="/profile"
+                  className="dropdown_link"
+                  onClick={() => setToggleDropdown(false)}
+                >
+                  My Profile
+                </Link>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            {provider &&
+              Object.values(provider).map(
+                provider >
+                (
+                  <button
+                    key={provider.name}
+                    type="button"
+                    className="black_btn"
+                    onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+                  >
+                    Sign In
+                  </button>
+                )
+              )}
           </>
         )}
       </div>
