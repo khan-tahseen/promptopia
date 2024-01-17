@@ -1,3 +1,4 @@
+import User from '@models/user';
 import { connectToDB } from '@utils/database';
 import NextAuth from 'next-auth';
 
@@ -10,21 +11,37 @@ const handler = NextAuth({
         'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&response_type=code',
     }),
   ],
-  async session({ session }) {},
+  async session({ session }) {
+    try {
+      const sessionUser = await User.findOne({ email: session.user.email });
+      session.user.id = sessionUser._id.toString();
+      return session;
+    } catch {
+      return { ...session, errorMessage: 'Failed to fetch user' };
+    }
+  },
 
   async signIn({ profile }) {
     try {
-        await connectToDB();
-        // Check if user already exists in the database
+      await connectToDB();
+      // Check if user already exists in the database
+      const existingUser = await User.findOne({ email: profile.email });
 
-        // if not, create a new user
+      // if user does not exist, create a new user
+      if (!existingUser) {
+        await User.create({
+          email: profile.email,
+          username: profile.name.replace(' ', '').toLowerCase(),
+          image: profile.picture,
+        });
+      }
 
-        return true;
+      return true;
     } catch (error) {
-        console.error(error);
-        return false;
+      console.error(error);
+      return false;
     }
-},
+  },
 });
 
 export { handler as GET, handler as POST };
