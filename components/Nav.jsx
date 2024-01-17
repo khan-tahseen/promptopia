@@ -6,16 +6,16 @@ import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 const Nav = () => {
-  const isUserLogedIn = true; // Replace with actual check
-  const [provider, setProvider] = useState(null);
+  const { data: session } = useSession();
+  const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
-    const setProviders = async () => {
+    const setUpProviders = async () => {
       const response = await getProviders();
-      setProvider(response);
+      setProviders(response);
     };
-    setProviders();
+    setUpProviders();
   }, []);
 
   return (
@@ -33,7 +33,7 @@ const Nav = () => {
 
       {/* Desktop Navigation */}
       <div className="sm:flex hidden">
-        {isUserLogedIn ? (
+        {session?.user ? (
           <di className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               Create Post
@@ -55,8 +55,8 @@ const Nav = () => {
           </di>
         ) : (
           <>
-            {provider &&
-              Object.values(provider).map((provider) => (
+            {providers &&
+              Object.values(providers).map((provider) => (
                 <button
                   key={provider.name}
                   type="button"
@@ -72,7 +72,7 @@ const Nav = () => {
 
       {/* Mobile Navigation */}
       <div className="sm:hidden flex relative">
-        {isUserLogedIn ? (
+        {session?.user ? (
           <div>
             <Image
               src="assets/images/logo.svg"
@@ -103,7 +103,7 @@ const Nav = () => {
 
                 <button
                   type="button"
-                  className='mt-4 w-full black_btn'
+                  className="mt-4 w-full black_btn"
                   onClick={() => {
                     setToggleDropdown(false);
                     signOut();
@@ -116,20 +116,17 @@ const Nav = () => {
           </div>
         ) : (
           <>
-            {provider &&
-              Object.values(provider).map(
-                provider >
-                (
-                  <button
-                    key={provider.name}
-                    type="button"
-                    className="black_btn"
-                    onClick={() => signIn(provider.id, { callbackUrl: '/' })}
-                  >
-                    Sign In
-                  </button>
-                )
-              )}
+            {providers &&
+              Object.values(providers).map((provider) => (
+                <button
+                  key={provider.name}
+                  type="button"
+                  className="black_btn"
+                  onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+                >
+                  Sign In
+                </button>
+              ))}
           </>
         )}
       </div>
