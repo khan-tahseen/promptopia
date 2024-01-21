@@ -48,14 +48,14 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
         </label>
 
         <div className="flex-end mx-3 mb-5 gap-4">
-          <Link href="/" className="text-sm text-gray-500">
+          <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
             Cancle
           </Link>
 
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 text-sm bg-primary-orange rounded-full text-white font-bold"
+            className="px-4 py-2 text-sm bg-primary-orange rounded-full text-white font-bold hover:bg-orange-600"
           >
             {submitting ? `${type}...` : type}
           </button>

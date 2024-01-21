@@ -2,6 +2,7 @@
 
 import Form from '@components/Form';
 import { useState } from 'react';
+import router from 'next/router';
 
 const CreatePrompt = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -11,7 +12,27 @@ const CreatePrompt = () => {
   });
 
   const createPrompt = async (e) => {
-    console.log(e);
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const response = await fetch('/api/prompt/new', {
+        method: 'POST',
+        body: JSON.stringify({
+          prompt: post.prompt,
+          tags: post.tags,
+          userId: session?.user.id,
+        }),
+      });
+
+      if (response.ok) {
+        router.push('/');
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSubmitting(false); // Reset the submitting state
+    }
   };
 
   return (
