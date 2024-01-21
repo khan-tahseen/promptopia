@@ -20,7 +20,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
           <span className="font-satoshi font-semibold text-base text-gray-700">
             Your AI Prompts
           </span>
-          
+
           <textarea
             required
             placeholder="Write your prompt here..."
@@ -29,6 +29,37 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
             onChange={(e) => setPost({ ...post, prompt: e.target.value })}
           />
         </label>
+
+        <label>
+          <span className="font-satoshi font-semibold text-base text-gray-700">
+            Tag{' '}
+            <span className="font-normal">
+              (#webDevelopment, #product, #idea)
+            </span>
+          </span>
+
+          <input
+            required
+            placeholder="#tag!"
+            className="form_input"
+            value={post.tags}
+            onChange={(e) => setPost({ ...post, tags: e.target.value })}
+          />
+        </label>
+
+        <div className="flex-end mx-3 mb-5 gap-4">
+          <Link href="/" className="text-sm text-gray-500">
+            Cancle
+          </Link>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="px-4 py-2 text-sm bg-primary-orange rounded-full text-white font-bold"
+          >
+            {submitting ? `${type}...` : type}
+          </button>
+        </div>
       </form>
     </section>
   );
