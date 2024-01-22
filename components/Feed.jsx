@@ -6,10 +6,10 @@ import PromptCard from './PromptCard';
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
     <div className="mt-16 prompt_layout">
-      {data.map((prompt) => (
+      {data.map((post) => (
         <PromptCard
-          key={prompt._id}
-          prompt={prompt}
+          key={post._id}
+          post={post}
           handleTagClick={handleTagClick}
         />
       ))}
@@ -32,6 +32,7 @@ const Feed = () => {
   }, []);
 
   const handleSearchText = (e) => {
+    e.preventDefault();
     setSearchText(e.target.value);
   };
 
