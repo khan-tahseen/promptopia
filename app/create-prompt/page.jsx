@@ -2,13 +2,16 @@
 
 import Form from '@components/Form';
 import { useState } from 'react';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const CreatePrompt = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({
     prompt: '',
-    tags: '',
+    tag: '',
   });
 
   const createPrompt = async (e) => {
@@ -20,7 +23,7 @@ const CreatePrompt = () => {
         method: 'POST',
         body: JSON.stringify({
           prompt: post.prompt,
-          tags: post.tags,
+          tag: post.tag,
           userId: session?.user.id,
         }),
       });
