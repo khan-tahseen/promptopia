@@ -4,6 +4,9 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const pathName = usePathname();
   const [copied, setCopied] = useState('');
 
   const handleCopy = () => {
@@ -51,11 +54,28 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
       </div>
       <p className="font-satoshi my-4 text-sm text-gray-700">{post.prompt}</p>
       <p
-        className="font-inter text-sm orange_gradient cursor-pointer"
+        className="font-inter text-sm blue_gradient cursor-pointer"
         onClick={() => handleTagClick && handleTagClick(post.tag)}
       >
         {post.tag}
       </p>
+
+      {session?.user.id === post.creator._id && pathName === '/profile' && (
+        <div className='mt-5 flex-center gap-12 border-t border-gray-300 pt-4'>
+          <p
+            className="font-inter text-sm cursor-pointer green_gradient hover:text-green-600"
+            onClick={handleEdit}
+          >
+            Edit
+          </p>
+          <p
+            className="font-inter text-sm cursor-pointer orange_gradient hover:text-red-600"
+            onClick={handleDelete}
+          >
+            Delete
+          </p>
+        </div>
+      )}
     </div>
   );
 };
