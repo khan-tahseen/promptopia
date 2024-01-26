@@ -6,6 +6,7 @@ import Profile from '@components/Profile';
 import { useEffect, useState } from 'react';
 
 const MyProfile = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [posts, setPosts] = useState([]);
 
@@ -18,14 +19,13 @@ const MyProfile = () => {
     if (session?.user.id) fetchPosts();
   }, []);
 
-  const handleDelete = async () => {
-    // Perform delete operation
+  const handleDelete = async (post) => {
     console.log('Deleting profile...');
   };
 
-  const handleEdit = () => {
-    // Perform edit operation
+  const handleEdit = (post) => {
     console.log('Editing profile...');
+    router.push(`/update-prompt?id=${post._id}`)
   };
 
   return (
