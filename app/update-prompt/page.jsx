@@ -24,7 +24,6 @@ const EditPrompt = () => {
     };
 
     if (promptId) getPromptsDetails();
-
   }, [promptId]);
 
   const updatePrompt = async (e) => {
@@ -34,12 +33,23 @@ const EditPrompt = () => {
     if (!promptId) return alert('Prompt ID not found.');
 
     try {
-      
-    } catch (error) {
-      
-    }
-  }
+      const response = await fetch(`/api/prompt/${promptId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          prompt: post.prompt,
+          tag: post.tag,
+        }),
+      });
 
+      if (response.ok) {
+        router.push('/');
+      }
+    } catch (error) {
+      console.log('error while updating prompts ', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Form
