@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import PromptCard from './PromptCard';
 
 const PromptCardList = ({ data, handleTagClick }) => {
@@ -18,22 +19,53 @@ const PromptCardList = ({ data, handleTagClick }) => {
 };
 
 const Feed = () => {
-  const [searchtext, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch('/api/prompt');
-      const data = await response.json();
-      setPosts(data);
-    };
+  const fetchPosts = async () => {
+    const response = await fetch('/api/prompt');
+    const data = await response.json();
+    setPosts(data);
+  };
 
+  useEffect(() => {
     fetchPosts();
   }, []);
 
+  const filterPrompts = (text) => {
+    const regex = new RegExp(text, 'i'); // 'i' flag for case-insensitive matching
+    return posts.filter(
+      (post) =>
+        regex.test(post.prompt) ||
+        regex.test(post.creator.username) ||
+        regex.test(post.tags)
+    );
+  };
+
+  if (!posts) {
+    return <div>Loading...</div>;
+  }
+
   const handleSearchText = (e) => {
-    e.preventDefault();
+    clearTimeout(searchTimeout);
     setSearchText(e.target.value);
+
+    //debounce meathod
+    setSearchTimeout(
+      setTimeout(() => {
+        const filteredPosts = filterPrompts(e.target.value);
+        setSearchResults(filteredPosts);
+      }, 500)
+    );
+  };
+
+  const handleTagClick = (tag) => {
+    setSearchText(tag);
+
+    const filteredPosts = filterPrompts(tag);
+    setSearchResults(filteredPosts);
   };
 
   return (
@@ -42,14 +74,28 @@ const Feed = () => {
         <input
           type="text"
           placeholder="Search for a tag or username"
-          value={searchtext}
+          value={searchText}
           onChange={handleSearchText}
           required
           className="search_input peer"
         />
+
+        {searchText && (
+          <Image
+            src={'/assets/icons/cross.svg'}
+            width={22}
+            height={22}
+            className="absolute right-4 cursor-pointer"
+            onClick={() => setSearchText('')}
+          />
+        )}
       </form>
 
-      <PromptCardList data={posts} handleTagClick={() => {}} />
+      {searchText ? (
+        <PromptCardList data={searchResults} handleTagClick={handleTagClick} />
+      ) : (
+        <PromptCardList data={posts} handleTagClick={handleTagClick} />
+      )}
     </section>
   );
 };
